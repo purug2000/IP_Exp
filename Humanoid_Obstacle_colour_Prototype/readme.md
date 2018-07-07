@@ -1,0 +1,1 @@
+This is a prototype code for color based obstacle detection for the Humanoid IITK Project.
