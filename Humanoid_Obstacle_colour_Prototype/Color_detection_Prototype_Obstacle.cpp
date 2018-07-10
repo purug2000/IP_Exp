@@ -30,13 +30,11 @@ Mat masker(Mat, vector<Point>, float);
 vector<Point> contoursConvexHull(vector<vector<Point> > contours);
 
 
-
-
 int main(int argc, char** argv)
 {
 	//VideoCapture cap(0); //capture the video from web cam
-	VideoCapture cap("3.mp4");//Take a video input
-
+	//VideoCapture cap("2.mp4");//Take a video input
+	namedWindow("Mid", CV_WINDOW_NORMAL);
 	// Check if camera opened successfully
 	if (!cap.isOpened())  // if not success, exit program
 	{
@@ -96,7 +94,7 @@ int main(int argc, char** argv)
 	cout << "1\n";
 	Mat acc(temp1.size(), CV_64FC3, Scalar(0));
 	cout << "2\n";
-	//VideoWriter video("outcpp2.avi", CV_FOURCC('M', 'J', 'P', 'G'), 10, Size(temp1.size().width, temp1.size().height));
+	//VideoWriter video("out4.avi", CV_FOURCC('M', 'J', 'P', 'G'), 10, Size(temp1.size().width, temp1.size().height));
 	while (true)
 	{
 		//free(imgOrig[(i - 1) % 3]);
@@ -211,7 +209,7 @@ void thresh_callback(int, void*)
 	if (contourfin.size() != 0) {
 		vector<Point> ConvexHullPoints = contoursConvexHull(contourfin);
 		
-		polylines(drawing, ConvexHullPoints, true, Scalar(255, 255, 255), 2);
+		//polylines(drawing, ConvexHullPoints, true, Scalar(255, 255, 255), 2);
 		polylines(imgOriginal, ConvexHullPoints, true, Scalar(0, 0, 255), 2);
 		
 		drawContours(drawing, contours, largest_contour_index, color, CV_FILLED, 8, hierarchy, 0, Point());
@@ -221,6 +219,7 @@ void thresh_callback(int, void*)
 		left = segArea(drawing(Rect(1, 1, cols / 5, rows)));
 		
 		mid = segArea(drawing(Rect(cols / 5 + 1, 1, 3 * cols / 5, rows)));
+		imshow("mid", drawing(Rect(cols / 5 + 1, 1, 3 * cols / 5, rows)));
 		
 		right = segArea(drawing(Rect(4 * cols / 5 + 1, 1, cols / 5, rows)));
 		
@@ -233,7 +232,7 @@ void thresh_callback(int, void*)
 		//cout << drawing;
 		double totper = largest_area * 100 / t;
 		if (totper > 10) {
-			if (midper > 5)
+			if (midper > 25)
 			{
 				imgOriginal = masker(imgOriginal, ConvexHullPoints, 0.5);
 				if (rightper > leftper)
@@ -277,12 +276,13 @@ double segArea(Mat img)
 	}
 	cout << "Tat";
 	findContours(border,contour, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-	double are = (cols + 2)*(rows + 2),retarea=0;
+	double are = (cols + 2)*(rows + 2),are2=cols*rows,retarea=0;
 	int reqInd=-1;
+	cout << contour.size();
 	for (int i = 0; i < contour.size(); i++)
 	{
 		double a = contourArea(contour[i]);
-		if (boundingRect(contour[i]).area() == are) {
+		if (are2< a && a < are) {
 			cout << "Holla";
 			continue;
 		}
